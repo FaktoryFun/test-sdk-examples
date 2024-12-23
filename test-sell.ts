@@ -1,5 +1,5 @@
 // test-sell.ts
-import { FaktorySDK } from "@faktory/core-sdk";
+import { FaktorySDK } from "@faktoryfun/core-sdk";
 import {
   makeContractCall,
   broadcastTransaction,

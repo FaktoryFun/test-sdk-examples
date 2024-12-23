@@ -1,5 +1,5 @@
 // test-buy.ts
-import { FaktorySDK } from "@faktory/core-sdk";
+import { FaktorySDK } from "@faktoryfun/core-sdk";
 import {
   makeContractCall,
   broadcastTransaction,
@@ -44,7 +44,7 @@ async function testBuy() {
     console.log("\nGetting buy parameters...");
     const buyParams = await sdk.getBuyParams({
       dexContract: DEX_CONTRACT,
-      ustx: 100000, // 0.05 STX
+      ustx: 100000, // 0.1 STX
       senderAddress: address,
       slippage: 30,
     });

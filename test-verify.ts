@@ -1,5 +1,5 @@
 // test-verify.ts
-import { FaktorySDK } from "@faktory/core-sdk";
+import { FaktorySDK } from "@faktoryfun/core-sdk";
 import dotenv from "dotenv";
 
 dotenv.config();

@@ -1,5 +1,5 @@
 // test-create.ts
-import { FaktorySDK } from "@faktory/core-sdk";
+import { FaktorySDK } from "@faktoryfun/core-sdk";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -11,8 +11,8 @@ const sdk = new FaktorySDK({
 async function testTokenCreation() {
   try {
     const tokenInput = {
-      symbol: "WOOF",
-      name: "Cat Pepe",
+      symbol: "miaou",
+      name: "Pepe Magic",
       description: "Much bush, such pepe",
       supply: 69000000,
       targetStx: 1,
