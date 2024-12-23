@@ -1,9 +1,7 @@
-Let's create a clean and helpful README for the test-sdk-examples repository:
-
 ````markdown
 # Faktory SDK Examples
 
-This repository contains example implementations for integrating the [@faktoryfun/core-sdk](https://github.com/FaktoryFun/core-sdk).
+This repository contains example implementations for integrating the [@faktoryfun/core-sdk](https://www.npmjs.com/package/@faktoryfun/core-sdk?activeTab=readme).
 
 ## Overview
 
@@ -61,7 +59,7 @@ npm run test-sell
 npm run test-create
 ```
 
-### Verify Transfer
+### Verify LP Transfer to AMM (on bonding graduation)
 
 ```typescript
 // test-verify.ts
