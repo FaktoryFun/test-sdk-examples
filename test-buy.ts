@@ -1,57 +1,70 @@
-import { FaktorySDK, NetworkType } from "@faktory/core-sdk";
+// test-buy.ts
+import { FaktorySDK } from "@faktory/core-sdk";
+import {
+  makeContractCall,
+  broadcastTransaction,
+  SignedContractCallOptions,
+  ClarityValue,
+} from "@stacks/transactions";
+import {
+  deriveChildAccount,
+  getNetwork,
+  getNextNonce,
+  logBroadcastResult,
+} from "./test-utils";
 import dotenv from "dotenv";
 
 dotenv.config();
-
-console.log("\nEnvironment Configuration:");
-console.log({
-  NETWORK: process.env.NETWORK,
-  STX_ADDRESS: process.env.STX_ADDRESS,
-  FAK_API_URL: process.env.FAK_API_URL,
-  HAS_MNEMONIC: !!process.env.MNEMONIC,
-});
 
 const DEX_CONTRACT =
   "SPV9K21TBFAK4KNRJXF5DFP8N7W46G4V9RCJDC22.cat-pepe-faktory-dex";
 
 const sdk = new FaktorySDK({
-  API_HOST: process.env.FAK_API_URL || "https://faktory-be.vercel.app/api",
-  API_KEY: process.env.FAK_API_KEY || "dev-api-token",
-  defaultAddress: process.env.STX_ADDRESS!,
-  network: (process.env.NETWORK || "testnet") as NetworkType,
+  network: "mainnet",
 });
 
 async function testBuy() {
   try {
-    // First get quote to see expected output
+    // Get account from mnemonic
+    const { address, key } = await deriveChildAccount(
+      "mainnet",
+      process.env.MNEMONIC!,
+      0
+    );
+
+    const networkObj = getNetwork("mainnet");
+    const nonce = await getNextNonce("mainnet", address);
+
+    // Get quote first
     console.log("\nGetting quote for 0.05 STX buy...");
-    const inQuote = await sdk.getIn(DEX_CONTRACT, 100000);
+    const inQuote = await sdk.getIn(DEX_CONTRACT, address, 100000);
     console.log("Quote:", JSON.stringify(inQuote, null, 2));
 
-    // Execute buy
-    console.log("\nExecuting buy of 0.05 STX...");
-    const buyResponse = await sdk.buy(
-      DEX_CONTRACT,
-      100000, // 0.05 STX
-      30000, // Higher gas fee
-      0, // account index
-      process.env.MNEMONIC!,
-      30 // 30% slippage
-    );
-    console.log("Buy transaction:", JSON.stringify(buyResponse, null, 2));
+    // Get transaction parameters
+    console.log("\nGetting buy parameters...");
+    const buyParams = await sdk.getBuyParams({
+      dexContract: DEX_CONTRACT,
+      ustx: 100000, // 0.05 STX
+      senderAddress: address,
+      slippage: 30,
+    });
+
+    // Add required properties for signing
+    const txOptions: SignedContractCallOptions = {
+      ...buyParams,
+      senderKey: key,
+      validateWithAbi: true,
+      fee: 30000,
+      nonce,
+      functionArgs: buyParams.functionArgs as ClarityValue[],
+    };
+
+    // Make and broadcast transaction
+    const tx = await makeContractCall(txOptions);
+    const broadcastResponse = await broadcastTransaction(tx);
+    await logBroadcastResult(broadcastResponse, address);
   } catch (error) {
     console.error("Error in buy test:", error);
-    if (error instanceof Error) {
-      console.error("Error details:", {
-        message: error.message,
-        stack: error.stack,
-      });
-      const anyError = error as any;
-      if (anyError.response) {
-        console.error("Response data:", anyError.response?.data);
-        console.error("Response status:", anyError.response?.status);
-      }
-    }
   }
 }
 
