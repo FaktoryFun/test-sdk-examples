@@ -1,6 +1,5 @@
 import { FaktorySDK, NetworkType } from "@faktory/core-sdk";
 import dotenv from "dotenv";
-import { promises as fs } from "fs";
 
 dotenv.config();
 
@@ -12,6 +11,9 @@ console.log({
   HAS_MNEMONIC: !!process.env.MNEMONIC,
 });
 
+const DEX_CONTRACT =
+  "SPV9K21TBFAK4KNRJXF5DFP8N7W46G4V9RCJDC22.hashes-faktory-dex";
+
 const sdk = new FaktorySDK({
   API_HOST: process.env.FAK_API_URL || "https://faktory-be.vercel.app/api",
   API_KEY: process.env.FAK_API_KEY || "dev-api-token",
@@ -19,148 +21,77 @@ const sdk = new FaktorySDK({
   network: (process.env.NETWORK || "testnet") as NetworkType,
 });
 
-async function saveContracts(contracts: {
-  tokenContract: string;
-  dexContract: string;
-}) {
-  await fs.writeFile(
-    "contracts.json",
-    JSON.stringify({
-      ...contracts,
-      timestamp: new Date().toISOString(),
-    })
-  );
-}
-
-async function loadContracts() {
+async function testReadOnlyFunctions() {
   try {
-    const data = await fs.readFile("contracts.json", "utf8");
-    return JSON.parse(data);
-  } catch (error) {
-    console.log("No existing contracts found");
-    return null;
-  }
-}
+    console.log("\n--- Testing Read-Only Functions ---");
 
-// Helper function to wait for deployment
-async function waitForDeployment(
-  tokenContract: string,
-  dexContract: string,
-  maxAttempts = 30
-) {
-  console.log("\nWaiting for contract deployment...");
-
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    const status = await sdk.checkContractsDeployed(tokenContract, dexContract);
-    console.log(`Attempt ${attempt + 1}/${maxAttempts}:`, status);
-
-    if (status.token && status.dex) {
-      console.log("Both contracts deployed successfully!");
-      return true;
-    }
-
-    console.log("Waiting 10 seconds before next check...");
-    await new Promise((resolve) => setTimeout(resolve, 10000)); // Wait 10 seconds
-  }
-
-  console.log("Maximum attempts reached. Contracts not fully deployed.");
-  return false;
-}
-
-async function testTokenCreation() {
-  try {
-    console.log("\nTesting token creation...");
-    const tokenInput = {
-      symbol: "SEXYPEPE",
-      name: "Sexy Pepe",
-      description: "The sexiest Pepe you've ever seen",
-      supply: 69000000,
-      targetStx: 1,
-      creatorAddress: process.env.STX_ADDRESS!,
-      initialBuyAmount: 0,
-      targetAmm: "SP2BN9JN4WEG02QYVX5Y21VMB2JWV3W0KNHPH9R4P",
-    };
-
-    console.log("Token Creation Parameters:", tokenInput);
-    const createResponse = await sdk.createToken(tokenInput);
-    console.log("\nToken Creation Result:", createResponse);
-
-    if (createResponse.success) {
-      const { tokenContract, dexContract } = createResponse.data[0];
-      console.log("\nContract Addresses:");
-      console.log("Token Contract:", tokenContract);
-      console.log("DEX Contract:", dexContract);
-
-      // Wait for deployment
-      const deployed = await waitForDeployment(tokenContract, dexContract);
-      if (deployed) {
-        await saveContracts({ tokenContract, dexContract });
-        return { tokenContract, dexContract };
-      }
-    }
-  } catch (error) {
-    console.error(
-      "Error in test:",
-      error instanceof Error ? error.message : error
-    );
-  }
-  return null;
-}
-
-async function testTrading(dexContract: string) {
-  try {
+    // Test get-open
     console.log("\nChecking if market is open...");
-    const isOpen = await sdk.getOpen(dexContract);
-    console.log("Market open:", isOpen);
+    const isOpen = await sdk.getOpen(DEX_CONTRACT);
+    console.log(
+      "Market open response structure:",
+      JSON.stringify(isOpen, null, 2)
+    );
 
-    if (isOpen) {
-      console.log("\nTesting buy...");
-      const buyResponse = await sdk.buy(
-        dexContract,
-        1100000,
-        10000,
-        0,
-        process.env.MNEMONIC!
-      );
-      console.log("Buy Result:", buyResponse);
-    } else {
-      console.log("Market is not open yet");
-    }
+    // Test get-in for 0.1 STX (100,000 microSTX)
+    console.log("\nTesting get-in for 0.1 STX...");
+    const inQuote = await sdk.getIn(DEX_CONTRACT, 100000);
+    console.log(
+      "Get-in quote complete response structure:",
+      JSON.stringify(inQuote, null, 2)
+    );
+
+    // Parse the response
+    const tokensOut = (inQuote as any).value.value["tokens-out"].value;
+    console.log("\nTokens out from get-in:", tokensOut);
+
+    // Test get-out with a smaller amount (1 token)
+    console.log(
+      "\nTesting get-out with 1000000 tokens (1 token assuming 6 decimals)..."
+    );
+    const outQuote = await sdk.getOut(DEX_CONTRACT, 1000000);
+    console.log("Get-out quote structure:", JSON.stringify(outQuote, null, 2));
   } catch (error) {
-    console.error(
-      "Error in test:",
-      error instanceof Error ? error.message : error
-    );
+    console.error("Error in read-only tests:", error);
   }
 }
 
-async function runTests() {
-  const contracts = await loadContracts();
+async function testTrading() {
+  try {
+    console.log("\n--- Testing Trading Functions ---");
 
-  if (contracts) {
-    console.log("\nFound existing contracts:", contracts);
-    const status = await sdk.checkContractsDeployed(
-      contracts.tokenContract,
-      contracts.dexContract
+    // Test buy
+    console.log("\nTesting buy with 0.1 STX...");
+    const buyResponse = await sdk.buy(
+      DEX_CONTRACT,
+      100000, // 0.1 STX
+      10000, // gas fee
+      0, // account index
+      process.env.MNEMONIC!,
+      20 // 20% slippage
     );
+    console.log("Buy transaction:", JSON.stringify(buyResponse, null, 2));
 
-    if (status.token && status.dex) {
-      console.log("Using existing deployed contracts");
-      await testTrading(contracts.dexContract);
-    } else {
-      console.log("Existing contracts not deployed, creating new ones...");
-      const newContracts = await testTokenCreation();
-      if (newContracts) {
-        await testTrading(newContracts.dexContract);
-      }
-    }
-  } else {
-    console.log("\nNo existing contracts found, creating new ones...");
-    const newContracts = await testTokenCreation();
-    if (newContracts) {
-      await testTrading(newContracts.dexContract);
-    }
+    // Test sell (with a small amount to avoid arithmetic underflow)
+    console.log("\nTesting sell with 1 token...");
+    const sellResponse = await sdk.sell(
+      DEX_CONTRACT,
+      1000000, // 1 token (assuming 6 decimals)
+      10000, // gas fee
+      0, // account index
+      process.env.MNEMONIC!,
+      20 // 20% slippage
+    );
+    console.log("Sell transaction:", JSON.stringify(sellResponse, null, 2));
+  } catch (error) {
+    console.error("Error in trading tests:", error);
   }
 }
 
-runTests();
+async function runAllTests() {
+  await testReadOnlyFunctions();
+  console.log("\nStarting trading tests...");
+  await testTrading();
+}
+
+runAllTests();
