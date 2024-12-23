@@ -3,6 +3,8 @@
 
 This repository contains example implementations for integrating the [@faktoryfun/core-sdk](https://www.npmjs.com/package/@faktoryfun/core-sdk?activeTab=readme).
 
+⚠️ Important: Smart contract audit is currently in progress by @setzeus. During this period, new tokens and DEXes created through the SDK will not be tradeable on mainnet, as trading is restricted to a single test address hard coded in the smart contract. Full trading functionality will be enabled automatically only for new tokens created after the audit is complete and this restriction is lifted.
+
 ## Overview
 
 These examples demonstrate how to use the Faktory SDK with wallet integration, showing complete transaction lifecycle from parameter building to broadcasting.
