@@ -37,6 +37,17 @@ MNEMONIC=your-mnemonic
 // - Build buy transaction parameters
 // - Handle transaction signing
 // - Broadcast transaction
+// test-buy.ts
+const buyParams = await sdk.getBuyParams({
+  dexContract: "SP000.token-dex",
+  ustx: 100000,
+  senderAddress: "SP000..."
+});
+
+// Sign and broadcast with your wallet
+const tx = await makeContractCall(buyParams);
+const signedTx = await wallet.signTransaction(tx);
+
 npm run test-buy
 ```
 
@@ -51,14 +62,66 @@ npm run test-buy
 npm run test-sell
 ```
 
-### Create Token
+## Create Token
+
+### Create Token (Managed)
 
 ```typescript
 // test-create.ts
 // Shows how to:
 // - Configure token parameters
 // - Create new token and DEX
+// test-create.ts - Faktory backend handles deployment
+const response = await sdk.createToken({
+  symbol: "TOKEN",
+  name: "My Token",
+  description: "A test token",
+  supply: 69000000,
+  targetStx: 1,
+  creatorAddress: process.env.STX_ADDRESS!,
+  initialBuyAmount: 0, // optional first buy
+  targetAmm: "SP3DX9KDA8AMX5BHW5QJ68W39V7YHZE696PHXFR20" // Velar
+});
+
 npm run test-create
+```
+
+### Create Token (Manual Deployment)
+
+```typescript
+// test-create-manual.ts - You handle deployment
+const params = await sdk.getTokenDeployParams({
+  symbol: "TOKEN",
+  name: "My Token",
+  description: "A test token",
+  supply: 69000000,
+  targetStx: 1,
+  creatorAddress: address,
+  initialBuyAmount: 0.1, // 0.1 STX first buy
+  targetAmm: "SP3DX9KDA8AMX5BHW5QJ68W39V7YHZE696PHXFR20",
+});
+
+// Deploy token contract (requires initialBuyAmount + 1 STX fee)
+const totalStxNeeded = initialBuyAmount * 1_000_000 + 1_000_000;
+const tokenTx = await makeContractDeploy({
+  contractName: "my-token-faktory",
+  codeBody: params.tokenCode,
+  postConditions: [
+    makeStandardSTXPostCondition(
+      address,
+      FungibleConditionCode.LessEqual,
+      totalStxNeeded
+    ),
+  ],
+  // ... other params
+});
+
+// Then deploy DEX contract (requires 1 STX fee)
+const dexTx = await makeContractDeploy({
+  contractName: "my-token-faktory-dex",
+  codeBody: params.dexCode,
+  // ... other params
+});
 ```
 
 ### Verify LP Transfer to AMM (on bonding graduation)
@@ -67,7 +130,21 @@ npm run test-create
 // test-verify.ts
 // Shows how to:
 // - Verify token transfers
+// test-verify.ts - Check bonding curve graduation
+const verification = await sdk.verifyTransfer("SP000.token");
+
+
 npm run test-verify
+```
+
+## Running Tests
+
+```typescript
+npm run test-buy      # Test token buying
+npm run test-sell     # Test token selling
+npm run test-create   # Test managed token creation
+npm run test-manual   # Test manual token creation
+npm run test-verify   # Test transfer verification
 ```
 
 ## Utils
@@ -89,6 +166,12 @@ The repository includes utility functions for:
 
 - [Faktory SDK Documentation](https://github.com/FaktoryFun/core-sdk)
 - [Faktory Website](https://faktory.fun)
+
+## Disclaimer
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+The user acknowledges that trading cryptocurrencies involves substantial risk and any trading decisions are made at their own risk. Past performance is not indicative of future results. This SDK is provided as a tool for interacting with smart contracts and should not be considered as financial advice.
 
 ```
 
