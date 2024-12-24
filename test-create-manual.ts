@@ -62,7 +62,7 @@ async function testManualTokenCreation() {
       "STX"
     );
 
-    const contractName = `man-magic-faktory`;
+    const contractName = `magic-faktory`;
     const tokenTx = await makeContractDeploy({
       contractName,
       codeBody: params.tokenCode,
