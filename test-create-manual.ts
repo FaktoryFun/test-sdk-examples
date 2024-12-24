@@ -25,6 +25,10 @@ const FAKTORY_FEE_ADDRESS = "SMH8FRN30ERW1SX26NJTJCKTDR3H27NRJ6W75WQE";
 
 async function testManualTokenCreation() {
   try {
+    const tokenName = "bushcoin"; // Base name
+    const nameForContract = tokenName.toLowerCase().replace(/\s+/g, "-");
+    const contractName = `${nameForContract}-faktory`;
+
     // Get account from mnemonic
     const { address, key } = await deriveChildAccount(
       "mainnet",
@@ -39,7 +43,7 @@ async function testManualTokenCreation() {
     console.log("Getting deployment parameters...");
     const params = await sdk.getTokenDeployParams({
       symbol: "BUSH",
-      name: "MAN Magic",
+      name: tokenName,
       description: "Much bush, such pepe",
       supply: 69000000,
       targetStx: 1,
@@ -62,7 +66,6 @@ async function testManualTokenCreation() {
       "STX"
     );
 
-    const contractName = `magic-faktory`;
     const tokenTx = await makeContractDeploy({
       contractName,
       codeBody: params.tokenCode,
