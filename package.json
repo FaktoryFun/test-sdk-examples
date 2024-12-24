@@ -7,7 +7,8 @@
     "test-buy": "ts-node test-buy.ts",
     "test-sell": "ts-node test-sell.ts",
     "test-create": "ts-node test-create.ts",
-    "test-verify": "ts-node test-verify.ts"
+    "test-verify": "ts-node test-verify.ts",
+    "test-create-manual": "ts-node test-create-manual.ts"
   },
   "keywords": [],
   "author": "",
