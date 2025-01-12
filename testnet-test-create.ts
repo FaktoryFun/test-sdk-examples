@@ -12,7 +12,7 @@ async function testTokenCreation() {
   try {
     const tokenInput = {
       symbol: "last",
-      name: "test token",
+      name: "test token2",
       description: "bet last and heavy",
       supply: 69000000,
       targetStx: 1,

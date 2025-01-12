@@ -16,7 +16,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const DEX_CONTRACT =
-  "STV9K21TBFAK4KNRJXF5DFP8N7W46G4V9RJ5XDY2.test-token-faktory-dex";
+  "STV9K21TBFAK4KNRJXF5DFP8N7W46G4V9RJ5XDY2.test-token2-faktory-dex";
 
 const sdk = new FaktorySDK({
   network: "testnet",
