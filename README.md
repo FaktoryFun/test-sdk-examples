@@ -3,7 +3,7 @@
 
 This repository contains example implementations for integrating the [@faktoryfun/core-sdk](https://www.npmjs.com/package/@faktoryfun/core-sdk?activeTab=readme).
 
-⚠️ Important: Smart contract audit is currently in progress by @setzeus. During this period, new tokens and DEXes created through the SDK will not be tradeable on mainnet, as trading is restricted to a single test address hard coded in the smart contract. Full trading functionality will be enabled automatically only for new tokens created after the audit is complete and this restriction is lifted.
+⚠️ Important: Token supply cannot exceed 1 billion tokens for better relatability. Note: If you receive a 500 status error during token creation, check if your supply exceeds 1 billion tokens. Please reduce the supply to 1 billion or less for better token relatability and market dynamics.
 
 ## Overview
 
@@ -23,8 +23,27 @@ Create a `.env` file:
 ```env
 NETWORK=mainnet
 STX_ADDRESS=your-stacks-address
+TESTNET_STX_ADDRESS=your-testnet-address
 MNEMONIC=your-mnemonic
 ```
+
+## Network Configuration
+
+The examples support both mainnet and testnet environments.
+
+Example for testnet:
+
+````typescript
+const sdk = new FaktorySDK({
+  network: "testnet",
+});
+
+// Use testnet addresses
+const testToken = await sdk.createToken({
+  creatorAddress: process.env.TESTNET_STX_ADDRESS!,
+  targetAmm: "ST28MP1HQDJWQAFSQJN2HBAXBVP7H7THD1Y83JDEY", // Testnet AMM
+  // ... other params
+});
 
 ## Examples
 
@@ -49,7 +68,7 @@ const tx = await makeContractCall(buyParams);
 const signedTx = await wallet.signTransaction(tx);
 
 npm run test-buy
-```
+````
 
 ### Sell Tokens
 
@@ -145,6 +164,12 @@ npm run test-sell     # Test token selling
 npm run test-create   # Test managed token creation
 npm run test-manual   # Test manual token creation
 npm run test-verify   # Test transfer verification
+
+npm run testnet-test-buy
+npm run testnet-test-sell
+npm run testnet-test-create
+npm run testnet-test-manual
+npm run testnet-test-verify
 ```
 
 ## Utils
