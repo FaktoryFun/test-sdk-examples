@@ -9,11 +9,11 @@
     "test-create": "ts-node test-create.ts",
     "test-verify": "ts-node test-verify.ts",
     "test-create-manual": "ts-node test-create-manual.ts",
-    "testnet-test-buy": "ts-node test-buy.ts",
-    "testnet-test-sell": "ts-node test-sell.ts",
-    "testnet-test-create": "ts-node test-create.ts",
-    "testnet-test-verify": "ts-node test-verify.ts",
-    "testnet-test-create-manual": "ts-node test-create-manual.ts"
+    "testnet-test-buy": "ts-node testnet-test-buy.ts",
+    "testnet-test-sell": "ts-node testnet-test-sell.ts",
+    "testnet-test-create": "ts-node testnet-test-create.ts",
+    "testnet-test-verify": "ts-node testnet-test-verify.ts",
+    "testnet-test-create-manual": "ts-node testnet-test-create-manual.ts"
   },
   "keywords": [],
   "author": "",

@@ -14,7 +14,7 @@ async function testTokenCreation() {
       symbol: "last",
       name: "bet last",
       description: "bet last and heavy",
-      supply: 69000000000,
+      supply: 69000000,
       targetStx: 1,
       creatorAddress: process.env.STX_ADDRESS!,
       initialBuyAmount: 0,
