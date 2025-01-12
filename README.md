@@ -1,4 +1,3 @@
-````markdown
 # Faktory SDK Examples
 
 This repository contains example implementations for integrating the [@faktoryfun/core-sdk](https://www.npmjs.com/package/@faktoryfun/core-sdk?activeTab=readme).
@@ -16,7 +15,8 @@ git clone https://github.com/FaktoryFun/test-sdk-examples.git
 cd test-sdk-examples
 npm install
 ```
-````
+
+`````
 
 Create a `.env` file:
 
@@ -68,7 +68,7 @@ const tx = await makeContractCall(buyParams);
 const signedTx = await wallet.signTransaction(tx);
 
 npm run test-buy
-````
+`````
 
 ### Sell Tokens
 
