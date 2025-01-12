@@ -5,20 +5,20 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const sdk = new FaktorySDK({
-  network: "mainnet",
+  network: "testnet",
 });
 
 async function testTokenCreation() {
   try {
     const tokenInput = {
       symbol: "last",
-      name: "bet last",
+      name: "test token",
       description: "bet last and heavy",
       supply: 69000000000,
       targetStx: 1,
-      creatorAddress: process.env.STX_ADDRESS!,
+      creatorAddress: process.env.TESTNET_STX_ADDRESS!,
       initialBuyAmount: 0,
-      targetAmm: "SP3DX9KDA8AMX5BHW5QJ68W39V7YHZE696PHXFR20",
+      targetAmm: "ST28MP1HQDJWQAFSQJN2HBAXBVP7H7THD1Y83JDEY",
       uri: "",
       logoUrl: "https://faktory.fun/drink-milkshake.gif",
       mediaUrl: "",
@@ -28,6 +28,7 @@ async function testTokenCreation() {
       discord: "https://x.com/RaphaStacks",
     };
 
+    console.log("Sending token input:", JSON.stringify(tokenInput, null, 2));
     const createResponse = await sdk.createToken(tokenInput);
     console.log("Token Creation Result:", createResponse);
   } catch (error) {
