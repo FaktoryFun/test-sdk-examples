@@ -16,8 +16,6 @@ cd test-sdk-examples
 npm install
 ```
 
-`````
-
 Create a `.env` file:
 
 ```env
@@ -33,7 +31,7 @@ The examples support both mainnet and testnet environments.
 
 Example for testnet:
 
-````typescript
+```typescript
 const sdk = new FaktorySDK({
   network: "testnet",
 });
@@ -44,6 +42,7 @@ const testToken = await sdk.createToken({
   targetAmm: "ST28MP1HQDJWQAFSQJN2HBAXBVP7H7THD1Y83JDEY", // Testnet AMM
   // ... other params
 });
+```
 
 ## Examples
 
@@ -68,7 +67,7 @@ const tx = await makeContractCall(buyParams);
 const signedTx = await wallet.signTransaction(tx);
 
 npm run test-buy
-`````
+```
 
 ### Sell Tokens
 
