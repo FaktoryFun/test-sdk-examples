@@ -13,7 +13,8 @@
     "testnet-test-sell": "ts-node testnet-test-sell.ts",
     "testnet-test-create": "ts-node testnet-test-create.ts",
     "testnet-test-verify": "ts-node testnet-test-verify.ts",
-    "testnet-test-create-manual": "ts-node testnet-test-create-manual.ts"
+    "testnet-test-create-manual": "ts-node testnet-test-create-manual.ts",
+    "test-ai-create": "ts-node test-ai-create.ts"
   },
   "keywords": [],
   "author": "",
