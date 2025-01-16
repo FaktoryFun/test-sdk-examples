@@ -14,7 +14,9 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-async function testAIBTCDevTokenCreation() {
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function testAIBTCDevDeployment() {
   try {
     const tokenName = "ai1";
     const nameForContract = tokenName.toLowerCase().replace(/\s+/g, "-");
@@ -26,7 +28,7 @@ async function testAIBTCDevTokenCreation() {
       0
     );
 
-    // Get contracts from AI BTC Dev endpoint
+    // Get token and dex contracts
     console.log("Getting contracts from AI BTC Dev endpoint...");
     const response = await fetch(
       "https://faktory-be.vercel.app/api/aibtcdev/generate",
@@ -53,11 +55,39 @@ async function testAIBTCDevTokenCreation() {
 
     const { token, dex } = result.data.contracts;
 
+    // Get pool contract
+    console.log("Getting pool contract...");
+    const poolResponse = await fetch(
+      "https://faktory-be.vercel.app/api/aibtcdev/generate-pool",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": process.env.AIBTCDEV_API_KEY || "",
+        },
+        body: JSON.stringify({
+          tokenContract: token.contract,
+          dexContract: dex.contract,
+          senderAddress: address,
+        }),
+      }
+    );
+
+    const poolResult = await poolResponse.json();
+    if (!poolResult.success) {
+      throw new Error(
+        `Failed to get pool contract: ${poolResult.error?.message}`
+      );
+    }
+
+    const { pool } = poolResult.data;
+
     // Setup network and nonce
     const networkObj = getNetwork("mainnet");
     const nonce = await getNextNonce("mainnet", address);
 
-    console.log("Deploying token contract...");
+    // 1. Deploy Token
+    console.log("1. Deploying token contract...");
     const tokenTx = await makeContractDeploy({
       contractName: token.name,
       codeBody: token.code,
@@ -71,11 +101,17 @@ async function testAIBTCDevTokenCreation() {
 
     const tokenBroadcastResponse = await broadcastTransaction(tokenTx);
     await logBroadcastResult(tokenBroadcastResponse, address);
+    console.log(`Token Contract: ${token.contract}`);
 
-    console.log("Deploying DEX contract...");
-    const dexTx = await makeContractDeploy({
-      contractName: dex.name,
-      codeBody: dex.code,
+    // Wait 30 seconds
+    console.log("Waiting 30 seconds before deploying pool...");
+    await delay(30000);
+
+    // 2. Deploy Pool
+    console.log("2. Deploying pool contract...");
+    const poolTx = await makeContractDeploy({
+      contractName: pool.name,
+      codeBody: pool.code,
       senderKey: key,
       network: networkObj,
       postConditionMode: PostConditionMode.Allow,
@@ -84,17 +120,35 @@ async function testAIBTCDevTokenCreation() {
       anchorMode: AnchorMode.Any,
     });
 
+    const poolBroadcastResponse = await broadcastTransaction(poolTx);
+    await logBroadcastResult(poolBroadcastResponse, address);
+    console.log(`Pool Contract: ${pool.contract}`);
+
+    // Wait 30 seconds
+    console.log("Waiting 30 seconds before deploying DEX...");
+    await delay(30000);
+
+    // 3. Deploy DEX
+    console.log("3. Deploying DEX contract...");
+    const dexTx = await makeContractDeploy({
+      contractName: dex.name,
+      codeBody: dex.code,
+      senderKey: key,
+      network: networkObj,
+      postConditionMode: PostConditionMode.Allow,
+      nonce: nonce + 2,
+      fee: 30000,
+      anchorMode: AnchorMode.Any,
+    });
+
     const dexBroadcastResponse = await broadcastTransaction(dexTx);
     await logBroadcastResult(dexBroadcastResponse, address);
-
-    console.log("Deployment complete!");
-    console.log(`Token Contract: ${token.contract}`);
-    console.log(`Token Hash: ${token.hash}`);
     console.log(`DEX Contract: ${dex.contract}`);
-    console.log(`DEX Hash: ${dex.hash}`);
+
+    console.log("All deployments complete!");
   } catch (error) {
-    console.error("Error in AI BTC Dev token creation:", error);
+    console.error("Error in AI BTC Dev deployment:", error);
   }
 }
 
-testAIBTCDevTokenCreation();
+testAIBTCDevDeployment();
