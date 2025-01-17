@@ -14,7 +14,10 @@
     "testnet-test-create": "ts-node testnet-test-create.ts",
     "testnet-test-verify": "ts-node testnet-test-verify.ts",
     "testnet-test-create-manual": "ts-node testnet-test-create-manual.ts",
-    "test-ai-create": "ts-node test-ai-create.ts"
+    "test-ai-create": "ts-node test-ai-create.ts",
+    "test-dao-tokens": "ts-node test-dao-tokens.ts",
+    "test-buy-ai3": "ts-node test-buy-ai3.ts",
+    "test-sell-ai3": "ts-node test-sell-ai3.ts"
   },
   "keywords": [],
   "author": "",
