@@ -18,7 +18,7 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function testAIBTCDevDeployment() {
   try {
-    const tokenName = "ai1";
+    const tokenName = "ai3";
     const nameForContract = tokenName.toLowerCase().replace(/\s+/g, "-");
 
     // Get account from mnemonic
@@ -39,11 +39,19 @@ async function testAIBTCDevDeployment() {
           "x-api-key": process.env.AIBTCDEV_API_KEY || "",
         },
         body: JSON.stringify({
-          symbol: "ai1",
+          symbol: "ai",
           name: tokenName,
-          supply: 69000000,
+          supply: 1000000000, // cannot exceed 1B (1B is allowed)
           creatorAddress: address,
           uri: "https://example.com/metadata.json",
+          // Optional fields:
+          logoUrl: "https://example.com/logo.png",
+          mediaUrl: "https://example.com/media.mp4",
+          twitter: "https://twitter.com/example",
+          website: "https://example.com",
+          telegram: "https://t.me/example",
+          discord: "https://discord.gg/example",
+          description: "My AI Token Description",
         }),
       }
     );
