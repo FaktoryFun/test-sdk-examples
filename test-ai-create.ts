@@ -18,9 +18,6 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function testAIBTCDevDeployment() {
   try {
-    const tokenName = "ai3";
-    const nameForContract = tokenName.toLowerCase().replace(/\s+/g, "-");
-
     // Get account from mnemonic
     const { address, key } = await deriveChildAccount(
       "mainnet",
@@ -39,19 +36,20 @@ async function testAIBTCDevDeployment() {
           "x-api-key": process.env.AIBTCDEV_API_KEY || "",
         },
         body: JSON.stringify({
-          symbol: "ai",
-          name: tokenName,
+          symbol: "bai",
+          name: "ai sbtc",
           supply: 1000000000, // cannot exceed 1B (1B is allowed)
           creatorAddress: address,
-          uri: "https://example.com/metadata.json",
+          uri: "https://bncytzyfafclmdxrwpgq.supabase.co/storage/v1/object/public/tokens/60360b67-5f2e-4dfb-adc4-f8bf7c9aab85.json",
           // Optional fields:
-          logoUrl: "https://example.com/logo.png",
-          mediaUrl: "https://example.com/media.mp4",
-          twitter: "https://twitter.com/example",
-          website: "https://example.com",
-          telegram: "https://t.me/example",
-          discord: "https://discord.gg/example",
-          description: "My AI Token Description",
+          logoUrl:
+            "https://bncytzyfafclmdxrwpgq.supabase.co/storage/v1/object/public/tokens/60360b67-5f2e-4dfb-adc4-f8bf7c9aab85.png",
+          mediaUrl: "",
+          twitter: "https://x.com/historyinmemes/status/1783783324789416343",
+          website: "https://x.com/historyinmemes/status/1783783324789416343",
+          telegram: "https://x.com/historyinmemes/status/1783783324789416343",
+          discord: "https://x.com/historyinmemes/status/1783783324789416343",
+          description: "totally with you David. Love you. RIP < 3",
         }),
       }
     );
@@ -77,6 +75,7 @@ async function testAIBTCDevDeployment() {
           tokenContract: token.contract,
           dexContract: dex.contract,
           senderAddress: address,
+          symbol: "bai",
         }),
       }
     );
