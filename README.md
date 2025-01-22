@@ -169,6 +169,10 @@ npm run testnet-test-sell
 npm run testnet-test-create
 npm run testnet-test-manual
 npm run testnet-test-verify
+
+// dedicated to ai btc dev
+npm run testnet-test-ai-create
+npm run test-ai-create
 ```
 
 ## Utils
