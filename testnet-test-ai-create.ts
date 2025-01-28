@@ -36,8 +36,8 @@ async function testAIBTCDevTestnetDeployment() {
           "x-api-key": process.env.AIBTCDEV_API_KEY || "",
         },
         body: JSON.stringify({
-          symbol: "ai9t",
-          name: "ai9 Testnet",
+          symbol: "ai69t",
+          name: "ai69 Testnet",
           supply: 1,
           creatorAddress: address,
           originAddress: "STV9K21TBFAK4KNRJXF5DFP8N7W46G4V9RJ5XDY2", // Added originAddress parameter
@@ -75,7 +75,7 @@ async function testAIBTCDevTestnetDeployment() {
           tokenContract: token.contract,
           dexContract: dex.contract,
           senderAddress: address,
-          symbol: "ai9t",
+          symbol: "ai69t",
         }),
       }
     );
