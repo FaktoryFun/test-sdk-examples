@@ -20,7 +20,7 @@ async function testAIBTCDevTestnetDeployment() {
   try {
     // Get account from mnemonic - using testnet
     const { address, key } = await deriveChildAccount(
-      "testnet", // Changed to testnet
+      "testnet",
       process.env.MNEMONIC!,
       0
     );
@@ -28,7 +28,7 @@ async function testAIBTCDevTestnetDeployment() {
     // Get token and dex contracts from testnet endpoint
     console.log("Getting contracts from AI BTC Dev testnet endpoint...");
     const response = await fetch(
-      "https://faktory-testnet-be.vercel.app/api/aibtcdev/generate", // Changed to testnet endpoint
+      "https://faktory-testnet-be.vercel.app/api/aibtcdev/generate",
       {
         method: "POST",
         headers: {
@@ -36,10 +36,11 @@ async function testAIBTCDevTestnetDeployment() {
           "x-api-key": process.env.AIBTCDEV_API_KEY || "",
         },
         body: JSON.stringify({
-          symbol: "ai4t",
-          name: "ai4 Testnet",
-          supply: 1000000000, /// cannot exceed 1B
+          symbol: "ai9t",
+          name: "ai9 Testnet",
+          supply: 1,
           creatorAddress: address,
+          originAddress: "STV9K21TBFAK4KNRJXF5DFP8N7W46G4V9RJ5XDY2", // Added originAddress parameter
           uri: "https://bncytzyfafclmdxrwpgq.supabase.co/storage/v1/object/public/tokens/60360b67-5f2e-4dfb-adc4-f8bf7c9aab85.json",
           // Optional fields:
           logoUrl:
@@ -61,10 +62,9 @@ async function testAIBTCDevTestnetDeployment() {
 
     const { token, dex } = result.data.contracts;
 
-    // Get pool contract from testnet endpoint
-    console.log("Getting pool contract...");
+    // Rest of the code remains the same...
     const poolResponse = await fetch(
-      "https://faktory-testnet-be.vercel.app/api/aibtcdev/generate-pool", // Changed to testnet endpoint
+      "https://faktory-testnet-be.vercel.app/api/aibtcdev/generate-pool",
       {
         method: "POST",
         headers: {
@@ -75,7 +75,7 @@ async function testAIBTCDevTestnetDeployment() {
           tokenContract: token.contract,
           dexContract: dex.contract,
           senderAddress: address,
-          symbol: "ai4t",
+          symbol: "ai9t",
         }),
       }
     );
@@ -89,11 +89,9 @@ async function testAIBTCDevTestnetDeployment() {
 
     const { pool } = poolResult.data;
 
-    // Setup testnet network and nonce
-    const networkObj = getNetwork("testnet"); // Using testnet network
+    const networkObj = getNetwork("testnet");
     const nonce = await getNextNonce("testnet", address);
 
-    // 1. Deploy Token
     console.log("1. Deploying token contract to testnet...");
     const tokenTx = await makeContractDeploy({
       contractName: token.name,
@@ -102,7 +100,7 @@ async function testAIBTCDevTestnetDeployment() {
       network: networkObj,
       postConditionMode: PostConditionMode.Allow,
       nonce,
-      fee: 30000, // Lower fee for testnet
+      fee: 30000,
       anchorMode: AnchorMode.Any,
     });
 
@@ -110,11 +108,9 @@ async function testAIBTCDevTestnetDeployment() {
     await logBroadcastResult(tokenBroadcastResponse, address);
     console.log(`Token Contract: ${token.contract}`);
 
-    // Shorter wait time for testnet
     console.log("Waiting 15 seconds before deploying pool...");
-    await delay(5000); // 15 seconds instead of 30
+    await delay(5000);
 
-    // 2. Deploy Pool
     console.log("2. Deploying pool contract to testnet...");
     const poolTx = await makeContractDeploy({
       contractName: pool.name,
@@ -123,7 +119,7 @@ async function testAIBTCDevTestnetDeployment() {
       network: networkObj,
       postConditionMode: PostConditionMode.Allow,
       nonce: nonce + 1,
-      fee: 30000, // Lower fee for testnet
+      fee: 30000,
       anchorMode: AnchorMode.Any,
     });
 
@@ -131,11 +127,9 @@ async function testAIBTCDevTestnetDeployment() {
     await logBroadcastResult(poolBroadcastResponse, address);
     console.log(`Pool Contract: ${pool.contract}`);
 
-    // Shorter wait time for testnet
     console.log("Waiting 15 seconds before deploying DEX...");
-    await delay(5000); // 15 seconds instead of 30
+    await delay(5000);
 
-    // 3. Deploy DEX
     console.log("3. Deploying DEX contract to testnet...");
     const dexTx = await makeContractDeploy({
       contractName: dex.name,
@@ -144,7 +138,7 @@ async function testAIBTCDevTestnetDeployment() {
       network: networkObj,
       postConditionMode: PostConditionMode.Allow,
       nonce: nonce + 2,
-      fee: 30000, // Lower fee for testnet
+      fee: 30000,
       anchorMode: AnchorMode.Any,
     });
 

@@ -18,7 +18,8 @@
     "test-dao-tokens": "ts-node test-dao-tokens.ts",
     "test-buy-ai3": "ts-node test-buy-ai3.ts",
     "test-sell-ai3": "ts-node test-sell-ai3.ts",
-    "testnet-test-ai-create": "ts-node testnet-test-ai-create.ts"
+    "testnet-test-ai-create": "ts-node testnet-test-ai-create.ts",
+    "testnet-test-create-bitflow": "ts-node testnet-test-create-bitflow.ts"
   },
   "keywords": [],
   "author": "",
