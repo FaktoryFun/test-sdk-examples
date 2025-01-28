@@ -41,6 +41,7 @@ async function testAIBTCDevDeployment() {
           supply: 1000000000, // cannot exceed 1B (1B is allowed)
           creatorAddress: address,
           originAddress: "STV9K21TBFAK4KNRJXF5DFP8N7W46G4V9RJ5XDY2", // Added originAddress parameter
+          tweetOrigin: "1883607431143723149", // add tweetOrigin parameter
           uri: "https://bncytzyfafclmdxrwpgq.supabase.co/storage/v1/object/public/tokens/60360b67-5f2e-4dfb-adc4-f8bf7c9aab85.json",
           // Optional fields:
           logoUrl:

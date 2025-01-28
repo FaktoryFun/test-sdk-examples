@@ -36,11 +36,12 @@ async function testAIBTCDevTestnetDeployment() {
           "x-api-key": process.env.AIBTCDEV_API_KEY || "",
         },
         body: JSON.stringify({
-          symbol: "ai69t",
+          symbol: "ai10t",
           name: "ai69 Testnet",
           supply: 1,
           creatorAddress: address,
           originAddress: "STV9K21TBFAK4KNRJXF5DFP8N7W46G4V9RJ5XDY2", // Added originAddress parameter
+          tweetOrigin: "1883607431143723149", // add tweetOrigin parameter
           uri: "https://bncytzyfafclmdxrwpgq.supabase.co/storage/v1/object/public/tokens/60360b67-5f2e-4dfb-adc4-f8bf7c9aab85.json",
           // Optional fields:
           logoUrl:
@@ -75,7 +76,7 @@ async function testAIBTCDevTestnetDeployment() {
           tokenContract: token.contract,
           dexContract: dex.contract,
           senderAddress: address,
-          symbol: "ai69t",
+          symbol: "ai10t",
         }),
       }
     );
