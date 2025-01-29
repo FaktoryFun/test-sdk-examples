@@ -19,7 +19,8 @@
     "test-buy-ai3": "ts-node test-buy-ai3.ts",
     "test-sell-ai3": "ts-node test-sell-ai3.ts",
     "testnet-test-ai-create": "ts-node testnet-test-ai-create.ts",
-    "testnet-test-create-bitflow": "ts-node testnet-test-create-bitflow.ts"
+    "testnet-test-create-bitflow": "ts-node testnet-test-create-bitflow.ts",
+    "fetch-holders": "ts-node scripts/fetch-holders.ts"
   },
   "keywords": [],
   "author": "",
@@ -30,7 +31,8 @@
     "@stacks/stacks-blockchain-api-types": "^7.14.1",
     "@stacks/transactions": "^6.17.0",
     "@stacks/wallet-sdk": "^7.0.2",
-    "dotenv": "^16.4.7"
+    "dotenv": "^16.4.7",
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

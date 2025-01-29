@@ -175,6 +175,10 @@ npm run testnet-test-ai-create
 npm run test-ai-create
 ```
 
+## Other
+
+npx ts-node fetch-holders.ts SP3E8B51MF5E28BD82FM95VDSQ71VK4KFNZX7ZK2R.frog-faktory::FROGGY
+
 ## Utils
 
 The repository includes utility functions for:
