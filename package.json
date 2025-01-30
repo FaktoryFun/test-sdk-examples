@@ -20,7 +20,8 @@
     "test-sell-ai3": "ts-node test-sell-ai3.ts",
     "testnet-test-ai-create": "ts-node testnet-test-ai-create.ts",
     "testnet-test-create-bitflow": "ts-node testnet-test-create-bitflow.ts",
-    "fetch-holders": "ts-node scripts/fetch-holders.ts"
+    "fetch-holders": "ts-node scripts/fetch-holders.ts",
+    "fetch-token-trades": "ts-node fetch-token-trades.ts"
   },
   "keywords": [],
   "author": "",
