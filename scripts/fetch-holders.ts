@@ -15,7 +15,7 @@ interface ApiResponse {
 }
 
 async function fetchTokenHolders(tokenId: string): Promise<ApiResponse> {
-  const url = `https://api.hiro.so/extended/v1/tokens/ft/${tokenId}/holders`;
+  const url = `https://api.hiro.so/extended/v1/tokens/ft/${tokenId}/holders?limit=200`;
   console.log("Fetching from:", url);
 
   const response = await fetch(url);
