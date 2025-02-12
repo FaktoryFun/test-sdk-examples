@@ -21,7 +21,8 @@
     "testnet-test-ai-create": "ts-node testnet-test-ai-create.ts",
     "testnet-test-create-bitflow": "ts-node testnet-test-create-bitflow.ts",
     "fetch-holders": "ts-node scripts/fetch-holders.ts",
-    "fetch-token-trades": "ts-node fetch-token-trades.ts"
+    "fetch-token-trades": "ts-node fetch-token-trades.ts",
+    "etch-runes": "ts-node etch-runes.ts"
   },
   "keywords": [],
   "author": "",
@@ -33,7 +34,8 @@
     "@stacks/transactions": "^6.17.0",
     "@stacks/wallet-sdk": "^7.0.2",
     "dotenv": "^16.4.7",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "ordinalsbot": "^0.2.15"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

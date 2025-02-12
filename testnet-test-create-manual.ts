@@ -26,7 +26,7 @@ const FAKTORY_FEE_ADDRESS = "STQM5S86GFM1731EBZE192PNMMP8844R30E8WDPB";
 
 async function testManualTokenCreation() {
   try {
-    const tokenName = "pctest"; // Base name
+    const tokenName = "gg serene"; // Base name
     const nameForContract = tokenName.toLowerCase().replace(/\s+/g, "-");
     const contractName = `${nameForContract}-faktory`;
 
@@ -43,11 +43,11 @@ async function testManualTokenCreation() {
     const initialBuyAmount = 0.1; // STX
     console.log("Getting deployment parameters...");
     const params = await sdk.getTokenDeployParams({
-      symbol: "pctest",
+      symbol: "gg",
       name: tokenName,
       description: "Test token on testnet",
       supply: 1,
-      targetStx: 1,
+      targetStx: 21,
       creatorAddress: address,
       initialBuyAmount,
       targetAmm: "ST28MP1HQDJWQAFSQJN2HBAXBVP7H7THD1Y83JDEY", // Testnet AMM

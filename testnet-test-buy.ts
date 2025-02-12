@@ -17,31 +17,31 @@ dotenv.config();
 
 // Use a testnet DEX contract
 const DEX_CONTRACT =
-  "STV9K21TBFAK4KNRJXF5DFP8N7W46G4V9RJ5XDY2.test-token2-faktory-dex";
+  "STV9K21TBFAK4KNRJXF5DFP8N7W46G4V9RJ5XDY2.gg-serene-faktory-dex";
 
 const sdk = new FaktorySDK({
-  network: "testnet", // Changed to testnet
+  network: "testnet",
 });
 
 async function testBuy() {
   try {
     const { address, key } = await deriveChildAccount(
-      "testnet", // Changed to testnet
+      "testnet",
       process.env.MNEMONIC!,
       0
     );
 
-    const networkObj = getNetwork("testnet"); // Changed to testnet
+    const networkObj = getNetwork("testnet");
     const nonce = await getNextNonce("testnet", address);
 
-    console.log("\nGetting quote for 0.05 STX buy...");
-    const inQuote = await sdk.getIn(DEX_CONTRACT, address, 100000);
-    console.log("Quote:", JSON.stringify(inQuote, null, 2));
+    console.log("\nGetting quote for 2 STX buy...");
+    // Note: getIn expects STX units, not microSTX
+    const inQuote = await sdk.getIn(DEX_CONTRACT, address, 22);
+    console.log("Quote:", JSON.stringify(inQuote, null, 22));
 
-    // Rest remains the same
     const buyParams = await sdk.getBuyParams({
       dexContract: DEX_CONTRACT,
-      ustx: 100000,
+      stx: 22, // 2 STX (SDK handles conversion to microSTX)
       senderAddress: address,
       slippage: 30,
     });
