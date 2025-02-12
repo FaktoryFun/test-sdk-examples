@@ -23,28 +23,20 @@ const inscription = new Inscription(API_KEY, "testnet");
 const runesEtchOrder = {
   files: [
     {
-      size: 10,
-      type: "plain/text",
-      name: "runes-token-etch.txt",
-      dataURL: "data:plain/text;base64,UnVuZXMgVG9rZW4gRXRjaA==",
+      name: "rune.txt", // Any supported file name
+      size: 1, // Size in bytes
+      type: "plain/text", // File type
+      dataURL: "data:plain/text;base64,YQ==", // Just contains "a" in base64
     },
   ],
   turbo: true,
   rune: "FAKTORY•TOKEN",
-  supply: 1000000,
-  symbol: "FAK",
-  premine: 1000000,
+  supply: 21000000, // 21m total supply
+  symbol: "K",
   divisibility: 8,
+  premine: 21000000, // 21m 100% premine
   fee: 510,
   receiveAddress: RECEIVE_ADDRESS,
-  terms: {
-    amount: 1,
-    cap: 1000000,
-    height: {
-      start: 2500000,
-      end: 2600000,
-    },
-  },
 };
 
 /**
