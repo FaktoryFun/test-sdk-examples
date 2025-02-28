@@ -12,7 +12,7 @@ async function testPreLaunchDeployment() {
     // Call pre-launch endpoint
     console.log("Calling pre-launch endpoint...");
     const response = await fetch(
-      "https://faktory-testnet-be.vercel.app//api/aibtcdev/prelaunch",
+      "https://faktory-testnet-be.vercel.app/api/aibtcdev/prelaunch",
       {
         method: "POST",
         headers: {
@@ -20,7 +20,7 @@ async function testPreLaunchDeployment() {
           "x-api-key": process.env.AIBTCDEV_API_KEY || "",
         },
         body: JSON.stringify({
-          symbol: "dale",
+          symbol: "dale2",
           name: "Pre-Launch Test",
           supply: 1000000000, // 1B tokens
           creatorAddress: testAddress,
