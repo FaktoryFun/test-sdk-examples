@@ -20,7 +20,7 @@ async function testAIBTCDevDeployment() {
   try {
     // Get account from mnemonic
     const { address, key } = await deriveChildAccount(
-      "mainnet",
+      "testnet",
       process.env.MNEMONIC!,
       0
     );
@@ -28,7 +28,7 @@ async function testAIBTCDevDeployment() {
     // Get token and dex contracts
     console.log("Getting contracts from AI BTC Dev endpoint...");
     const response = await fetch(
-      "https://faktory-be.vercel.app/api/aibtcdev/generate",
+      "https://faktory-testnet-be.vercel.app/api/aibtcdev/generate",
       {
         method: "POST",
         headers: {
@@ -36,7 +36,7 @@ async function testAIBTCDevDeployment() {
           "x-api-key": process.env.AIBTCDEV_API_KEY || "",
         },
         body: JSON.stringify({
-          symbol: "bai2",
+          symbol: "dale",
           name: "ai sbtc",
           supply: 1000000000, // cannot exceed 1B (1B is allowed)
           creatorAddress: address,
@@ -66,7 +66,7 @@ async function testAIBTCDevDeployment() {
     // Get pool contract
     console.log("Getting pool contract...");
     const poolResponse = await fetch(
-      "https://faktory-be.vercel.app/api/aibtcdev/generate-pool",
+      "https://faktory-testnet-be.vercel.app/api/aibtcdev/generate-pool",
       {
         method: "POST",
         headers: {
@@ -77,7 +77,7 @@ async function testAIBTCDevDeployment() {
           tokenContract: token.contract,
           dexContract: dex.contract,
           senderAddress: address,
-          symbol: "bai2",
+          symbol: "dale",
         }),
       }
     );
@@ -92,8 +92,8 @@ async function testAIBTCDevDeployment() {
     const { pool } = poolResult.data;
 
     // Setup network and nonce
-    const networkObj = getNetwork("mainnet");
-    const nonce = await getNextNonce("mainnet", address);
+    const networkObj = getNetwork("testnet");
+    const nonce = await getNextNonce("testnet", address);
 
     // 1. Deploy Token
     console.log("1. Deploying token contract...");
