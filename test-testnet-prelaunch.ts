@@ -1,9 +1,22 @@
+import {
+  deriveChildAccount,
+  getNetwork,
+  getNextNonce,
+  logBroadcastResult,
+} from "./test-utils";
+
 import dotenv from "dotenv";
 
 dotenv.config();
 
 async function testPreLaunchDeployment() {
   try {
+    // Get account from mnemonic
+    const { address, key } = await deriveChildAccount(
+      "testnet",
+      process.env.MNEMONIC!,
+      0
+    );
     // Use a test address - this is the address that will be the token creator
     const testAddress = "ST1JAG6TV2XRYFGJN7CAAN6Z3CEW2YMZWMKWG4PBM";
 
@@ -20,10 +33,10 @@ async function testPreLaunchDeployment() {
           "x-api-key": process.env.AIBTCDEV_API_KEY || "",
         },
         body: JSON.stringify({
-          symbol: "dale2",
+          symbol: "SIMPLE8",
           name: "Pre-Launch Test",
           supply: 1000000000, // 1B tokens
-          creatorAddress: testAddress,
+          creatorAddress: address,
           originAddress: testAddress,
           description: "Test token for pre-launch functionality",
           tweetOrigin: "1883607431143723149", // add tweetOrigin parameter

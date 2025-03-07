@@ -17,7 +17,7 @@ dotenv.config();
 
 // Use a testnet DEX contract
 const DEX_CONTRACT =
-  "STV9K21TBFAK4KNRJXF5DFP8N7W46G4V9RJ5XDY2.gg-serene-faktory-dex";
+  "STV9K21TBFAK4KNRJXF5DFP8N7W46G4V9RJ5XDY2.okbtc4-faktory-dex";
 
 const sdk = new FaktorySDK({
   network: "testnet",
@@ -41,9 +41,9 @@ async function testBuy() {
 
     const buyParams = await sdk.getBuyParams({
       dexContract: DEX_CONTRACT,
-      stx: 22, // 2 STX (SDK handles conversion to microSTX)
+      stx: 0.002, // 200K Sats (SDK handles conversion to microSTX or sats)
       senderAddress: address,
-      slippage: 30,
+      slippage: 15,
     });
 
     const txOptions: SignedContractCallOptions = {

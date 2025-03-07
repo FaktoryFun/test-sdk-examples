@@ -17,7 +17,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const DEX_CONTRACT =
-  "SPV9K21TBFAK4KNRJXF5DFP8N7W46G4V9RCJDC22.cat-pepe-faktory-dex";
+  "STV9K21TBFAK4KNRJXF5DFP8N7W46G4V9RJ5XDY2.okbtc4-faktory-dex";
 
 const sdk = new FaktorySDK({
   network: "mainnet",
@@ -37,14 +37,14 @@ async function testBuy() {
 
     // Get quote first
     console.log("\nGetting quote for 0.05 STX buy...");
-    const inQuote = await sdk.getIn(DEX_CONTRACT, address, 100000);
+    const inQuote = await sdk.getIn(DEX_CONTRACT, address, 200000);
     console.log("Quote:", JSON.stringify(inQuote, null, 2));
 
     // Get transaction parameters
     console.log("\nGetting buy parameters...");
     const buyParams = await sdk.getBuyParams({
       dexContract: DEX_CONTRACT,
-      ustx: 100000, // 0.1 STX
+      stx: 200000, //  200k sats
       senderAddress: address,
       slippage: 30,
     });

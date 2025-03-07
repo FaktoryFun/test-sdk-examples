@@ -23,7 +23,8 @@
     "fetch-holders": "ts-node scripts/fetch-holders.ts",
     "fetch-token-trades": "ts-node fetch-token-trades.ts",
     "etch-runes": "ts-node etch-runes.ts",
-    "testnet-prelaunch": "ts-node test-testnet-prelaunch.ts"
+    "testnet-prelaunch": "ts-node test-testnet-prelaunch.ts",
+    "deploy-dao": "ts-node deploy-dao.ts"
   },
   "keywords": [],
   "author": "",

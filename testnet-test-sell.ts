@@ -16,7 +16,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const DEX_CONTRACT =
-  "STV9K21TBFAK4KNRJXF5DFP8N7W46G4V9RJ5XDY2.test-token2-faktory-dex";
+  "STV9K21TBFAK4KNRJXF5DFP8N7W46G4V9RJ5XDY2.okbtc4-faktory-dex";
 
 const sdk = new FaktorySDK({
   network: "testnet",
@@ -33,7 +33,7 @@ async function testSell() {
     const networkObj = getNetwork("testnet");
     const nonce = await getNextNonce("testnet", address);
 
-    const amount = 4000000 * Math.pow(10, 6);
+    const amount = 600000;
 
     // Rest remains the same with testnet contract
     console.log("\nGetting quote for selling tokens...");
@@ -42,9 +42,9 @@ async function testSell() {
 
     const sellParams = await sdk.getSellParams({
       dexContract: DEX_CONTRACT,
-      amount,
+      amount, // amount is in TOKEN units
       senderAddress: address,
-      slippage: 20,
+      slippage: 15,
     });
 
     const txOptions: SignedContractCallOptions = {
