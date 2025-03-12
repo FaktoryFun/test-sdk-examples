@@ -24,7 +24,9 @@
     "fetch-token-trades": "ts-node fetch-token-trades.ts",
     "etch-runes": "ts-node etch-runes.ts",
     "testnet-prelaunch": "ts-node test-testnet-prelaunch.ts",
-    "deploy-dao": "ts-node deploy-dao.ts"
+    "deploy-dao": "ts-node deploy-dao.ts",
+    "mainnet-prelaunch": "ts-node test-mainnet-prelaunch.ts",
+    "main-ai-create": "ts-node test-ai-main-create.ts"
   },
   "keywords": [],
   "author": "",

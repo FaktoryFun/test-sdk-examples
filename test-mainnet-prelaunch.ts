@@ -13,19 +13,19 @@ async function testPreLaunchDeployment() {
   try {
     // Get account from mnemonic
     const { address, key } = await deriveChildAccount(
-      "testnet",
+      "mainnet",
       process.env.MNEMONIC!,
       0
     );
     // Use a test address - this is the address that will be the token creator
-    const testAddress = "ST1JAG6TV2XRYFGJN7CAAN6Z3CEW2YMZWMKWG4PBM";
+    const testAddress = "SP7SX9AT5H41YGYRV8MACR1NESBYF6TRMC6P82DV";
 
     console.log("Using creator address:", testAddress);
 
     // Call pre-launch endpoint
     console.log("Calling pre-launch endpoint...");
     const response = await fetch(
-      "https://faktory-testnet-be.vercel.app/api/aibtcdev/prelaunch",
+      "https://faktory-be.vercel.app/api/aibtcdev/prelaunch",
       {
         method: "POST",
         headers: {
@@ -33,7 +33,7 @@ async function testPreLaunchDeployment() {
           "x-api-key": process.env.AIBTCDEV_API_KEY || "",
         },
         body: JSON.stringify({
-          symbol: "SIMPLE18",
+          symbol: "testMASK3",
           name: "Pre-Launch Test",
           supply: 1000000000, // 1B tokens
           creatorAddress: address,

@@ -20,7 +20,7 @@ async function testAIBTCDevDeployment() {
   try {
     // Get account from mnemonic
     const { address, key } = await deriveChildAccount(
-      "testnet",
+      "mainnet",
       process.env.MNEMONIC!,
       0
     );
@@ -28,7 +28,7 @@ async function testAIBTCDevDeployment() {
     // Get token and dex contracts
     console.log("Getting contracts from AI BTC Dev endpoint...");
     const response = await fetch(
-      "https://faktory-testnet-be.vercel.app/api/aibtcdev/generate",
+      "https://faktory-be.vercel.app/api/aibtcdev/generate",
       {
         method: "POST",
         headers: {
@@ -36,11 +36,11 @@ async function testAIBTCDevDeployment() {
           "x-api-key": process.env.AIBTCDEV_API_KEY || "",
         },
         body: JSON.stringify({
-          symbol: "SIMPLE18",
+          symbol: "testMASK3",
           name: "ai sbtc",
           supply: 1000000000, // cannot exceed 1B (1B is allowed)
           creatorAddress: address,
-          originAddress: "STV9K21TBFAK4KNRJXF5DFP8N7W46G4V9RJ5XDY2", // "SP7SX9AT5H41YGYRV8MACR1NESBYF6TRMC6P82DV", // Added originAddress parameter
+          originAddress: "SP7SX9AT5H41YGYRV8MACR1NESBYF6TRMC6P82DV", // "SP7SX9AT5H41YGYRV8MACR1NESBYF6TRMC6P82DV", // Added originAddress parameter
           tweetOrigin: "1883607431143723149", // add tweetOrigin parameter
           uri: "https://bncytzyfafclmdxrwpgq.supabase.co/storage/v1/object/public/tokens/60360b67-5f2e-4dfb-adc4-f8bf7c9aab85.json",
           // Optional fields:
@@ -66,7 +66,7 @@ async function testAIBTCDevDeployment() {
     // Get pool contract
     console.log("Getting pool contract...");
     const poolResponse = await fetch(
-      "https://faktory-testnet-be.vercel.app/api/aibtcdev/generate-pool",
+      "https://faktory-be.vercel.app/api/aibtcdev/generate-pool",
       {
         method: "POST",
         headers: {
@@ -77,7 +77,7 @@ async function testAIBTCDevDeployment() {
           tokenContract: token.contract,
           dexContract: dex.contract,
           senderAddress: address,
-          symbol: "SIMPLE18",
+          symbol: "testMASK3",
         }),
       }
     );
@@ -92,8 +92,8 @@ async function testAIBTCDevDeployment() {
     const { pool } = poolResult.data;
 
     // Setup network and nonce
-    const networkObj = getNetwork("testnet");
-    const nonce = await getNextNonce("testnet", address);
+    const networkObj = getNetwork("mainnet");
+    const nonce = await getNextNonce("mainnet", address);
 
     // 1. Deploy Token
     console.log("1. Deploying token contract...");
