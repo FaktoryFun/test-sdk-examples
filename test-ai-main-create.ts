@@ -36,7 +36,7 @@ async function testAIBTCDevDeployment() {
           "x-api-key": process.env.AIBTCDEV_API_KEY || "",
         },
         body: JSON.stringify({
-          symbol: "testMASK3",
+          symbol: "testMASK9",
           name: "ai sbtc",
           supply: 1000000000, // cannot exceed 1B (1B is allowed)
           creatorAddress: address,
@@ -77,7 +77,7 @@ async function testAIBTCDevDeployment() {
           tokenContract: token.contract,
           dexContract: dex.contract,
           senderAddress: address,
-          symbol: "testMASK3",
+          symbol: "testMASK9",
         }),
       }
     );

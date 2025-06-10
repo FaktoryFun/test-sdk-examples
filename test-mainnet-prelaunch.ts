@@ -33,7 +33,7 @@ async function testPreLaunchDeployment() {
           "x-api-key": process.env.AIBTCDEV_API_KEY || "",
         },
         body: JSON.stringify({
-          symbol: "testMASK3",
+          symbol: "testMASK9",
           name: "Pre-Launch Test",
           supply: 1000000000, // 1B tokens
           creatorAddress: address,

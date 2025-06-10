@@ -1,3 +1,4 @@
+// testnet-test-create-manual
 import { FaktorySDK } from "@faktoryfun/core-sdk";
 import {
   makeContractDeploy,
