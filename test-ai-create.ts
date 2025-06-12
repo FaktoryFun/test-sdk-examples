@@ -209,7 +209,7 @@ async function testAIBTCDevDeployment() {
       senderKey: key,
       network: getNetwork("testnet"),
       postConditionMode: PostConditionMode.Allow,
-      nonce: await getNextNonce("testnet", address),
+      nonce,
       fee: 30000,
       anchorMode: AnchorMode.Any,
     });
@@ -234,7 +234,7 @@ async function testAIBTCDevDeployment() {
       senderKey: key,
       network: networkObj,
       postConditionMode: PostConditionMode.Allow,
-      nonce,
+      nonce: nonce + 1,
       fee: 30000,
       anchorMode: AnchorMode.Any,
     });
@@ -255,7 +255,7 @@ async function testAIBTCDevDeployment() {
       senderKey: key,
       network: networkObj,
       postConditionMode: PostConditionMode.Allow,
-      nonce: nonce + 1,
+      nonce: nonce + 2,
       fee: 30000,
       anchorMode: AnchorMode.Any,
     });
@@ -276,7 +276,7 @@ async function testAIBTCDevDeployment() {
       senderKey: key,
       network: networkObj,
       postConditionMode: PostConditionMode.Allow,
-      nonce: nonce + 2,
+      nonce: nonce + 3,
       fee: 30000,
       anchorMode: AnchorMode.Any,
     });
