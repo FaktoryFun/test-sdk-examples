@@ -86,7 +86,7 @@ async function testAIBTCDevDeployment() {
           "x-api-key": process.env.AIBTCDEV_API_KEY || "",
         },
         body: JSON.stringify({
-          symbol: "SIMPLE18",
+          symbol: "SIMPL20",
           name: "ai sbtc",
           supply: 1000000000, // cannot exceed 1B (1B is allowed)
           creatorAddress: address,
@@ -124,6 +124,7 @@ async function testAIBTCDevDeployment() {
 
     // Step 1: Generate token and dex contracts
     console.log("1. Getting contracts from AI BTC Dev endpoint...");
+    const prelaunchContractId = prelaunchResult.data.contract.contract; // e.g. 'ST1234.prelaunch-SIMPL20'
     const response = await fetch(
       "https://faktory-testnet-be.vercel.app/api/aibtcdev/generate",
       {
@@ -133,7 +134,7 @@ async function testAIBTCDevDeployment() {
           "x-api-key": process.env.AIBTCDEV_API_KEY || "",
         },
         body: JSON.stringify({
-          symbol: "SIMPLE18",
+          symbol: "SIMPL20",
           name: "ai sbtc",
           supply: 1000000000, // cannot exceed 1B (1B is allowed)
           creatorAddress: address,
@@ -149,6 +150,7 @@ async function testAIBTCDevDeployment() {
           telegram: "https://x.com/historyinmemes/status/1783783324789416343",
           discord: "https://x.com/historyinmemes/status/1783783324789416343",
           description: "totally with you David. Love you. RIP < 3",
+          prelaunchContract: prelaunchContractId, // <-- pass user's contract
         }),
       }
     );
@@ -174,7 +176,7 @@ async function testAIBTCDevDeployment() {
           tokenContract: token.contract,
           dexContract: dex.contract,
           senderAddress: address,
-          symbol: "SIMPLE18",
+          symbol: "SIMPL20",
         }),
       }
     );
@@ -191,6 +193,38 @@ async function testAIBTCDevDeployment() {
     // Setup network and nonce
     const networkObj = getNetwork("testnet");
     const nonce = await getNextNonce("testnet", address);
+
+    // Step 3.0: Deploy PreLaunch Contract
+    console.log("Prelaunch contract code generated successfully!");
+    console.log("Prelaunch Contract:", prelaunchResult.data.contract.contract);
+
+    // Deploy the prelaunch contract
+    console.log("Deploying prelaunch contract on-chain...");
+    const prelaunchContractName = prelaunchResult.data.contract.name;
+    const prelaunchContractCode = prelaunchResult.data.contract.code;
+
+    const prelaunchDeployTx = await makeContractDeploy({
+      contractName: prelaunchContractName,
+      codeBody: prelaunchContractCode,
+      senderKey: key,
+      network: getNetwork("testnet"),
+      postConditionMode: PostConditionMode.Allow,
+      nonce: await getNextNonce("testnet", address),
+      fee: 30000,
+      anchorMode: AnchorMode.Any,
+    });
+
+    const prelaunchBroadcastResponse = await broadcastTransaction(
+      prelaunchDeployTx
+    );
+    await logBroadcastResult(prelaunchBroadcastResponse, address);
+    console.log(
+      `Prelaunch contract deployed: ${prelaunchResult.data.contract.contract}`
+    );
+
+    // Wait for prelaunch to be mined
+    console.log("Waiting 10 seconds for prelaunch to confirm...");
+    await delay(10000);
 
     // Step 3: Deploy Token
     console.log("3. Deploying token contract...");
