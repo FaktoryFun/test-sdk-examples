@@ -12,26 +12,17 @@ import {
 } from "./test-utils";
 import dotenv from "dotenv";
 
-// Type definitions for API responses
-interface PrelaunchResponse {
-  success: boolean;
-  data: {
-    contract: {
-      name: string;
-      code: string;
-      hash: string;
-      contract: string;
-    };
-    txId: string;
-    dbRecord: any;
-  };
-  error?: { message: string };
-}
-
+// Updated type definition for consolidated response
 interface GenerateResponse {
   success: boolean;
   data: {
     contracts: {
+      prelaunch: {
+        name: string;
+        code: string;
+        hash: string;
+        contract: string;
+      };
       token: {
         name: string;
         code: string;
@@ -42,6 +33,11 @@ interface GenerateResponse {
         name: string;
         code: string;
         hash: string;
+        contract: string;
+      };
+      pool: {
+        name: string;
+        code: string;
         contract: string;
       };
     };
@@ -75,56 +71,8 @@ async function testAIBTCDevDeployment() {
       0
     );
 
-    // Step 0: Create prelaunch contract
-    console.log("0. Creating prelaunch contract...");
-    const prelaunchResponse = await fetch(
-      "https://faktory-testnet-be.vercel.app/api/aibtcdev/prelaunch",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": process.env.AIBTCDEV_API_KEY || "",
-        },
-        body: JSON.stringify({
-          symbol: "SIMPL20",
-          name: "ai sbtc",
-          supply: 1000000000, // cannot exceed 1B (1B is allowed)
-          creatorAddress: address,
-          originAddress: "STV9K21TBFAK4KNRJXF5DFP8N7W46G4V9RJ5XDY2",
-          tweetOrigin: "1883607431143723149",
-          uri: "https://bncytzyfafclmdxrwpgq.supabase.co/storage/v1/object/public/tokens/60360b67-5f2e-4dfb-adc4-f8bf7c9aab85.json",
-          // Optional fields:
-          logoUrl:
-            "https://bncytzyfafclmdxrwpgq.supabase.co/storage/v1/object/public/tokens/60360b67-5f2e-4dfb-adc4-f8bf7c9aab85.png",
-          mediaUrl: "",
-          twitter: "https://x.com/historyinmemes/status/1783783324789416343",
-          website: "https://x.com/historyinmemes/status/1783783324789416343",
-          telegram: "https://x.com/historyinmemes/status/1783783324789416343",
-          discord: "https://x.com/historyinmemes/status/1783783324789416343",
-          description: "totally with you David. Love you. RIP < 3",
-        }),
-      }
-    );
-
-    const prelaunchResult =
-      (await prelaunchResponse.json()) as PrelaunchResponse;
-    if (!prelaunchResult.success) {
-      throw new Error(
-        `Failed to create prelaunch: ${prelaunchResult.error?.message}`
-      );
-    }
-
-    console.log("Prelaunch contract created successfully!");
-    console.log("Prelaunch Contract:", prelaunchResult.data.contract.contract);
-    console.log("Prelaunch TX ID:", prelaunchResult.data.txId);
-
-    // Wait for prelaunch to be mined
-    console.log("Waiting 10 seconds for prelaunch to confirm...");
-    await delay(10000);
-
-    // Step 1: Generate token and dex contracts
-    console.log("1. Getting contracts from AI BTC Dev endpoint...");
-    const prelaunchContractId = prelaunchResult.data.contract.contract; // e.g. 'ST1234.prelaunch-SIMPL20'
+    // Step 1: Generate all contracts (prelaunch, token, dex, pool) in one call
+    console.log("1. Getting all contracts from AI BTC Dev endpoint...");
     const response = await fetch(
       "https://faktory-testnet-be.vercel.app/api/aibtcdev/generate",
       {
@@ -134,9 +82,9 @@ async function testAIBTCDevDeployment() {
           "x-api-key": process.env.AIBTCDEV_API_KEY || "",
         },
         body: JSON.stringify({
-          symbol: "SIMPL20",
+          symbol: "DEPLYR1",
           name: "ai sbtc",
-          supply: 1000000000, // cannot exceed 1B (1B is allowed)
+          supply: 1000000000,
           creatorAddress: address,
           originAddress: "STV9K21TBFAK4KNRJXF5DFP8N7W46G4V9RJ5XDY2",
           tweetOrigin: "1883607431143723149",
@@ -150,7 +98,6 @@ async function testAIBTCDevDeployment() {
           telegram: "https://x.com/historyinmemes/status/1783783324789416343",
           discord: "https://x.com/historyinmemes/status/1783783324789416343",
           description: "totally with you David. Love you. RIP < 3",
-          prelaunchContract: prelaunchContractId, // <-- pass user's contract
         }),
       }
     );
@@ -160,54 +107,24 @@ async function testAIBTCDevDeployment() {
       throw new Error(`Failed to get contracts: ${result.error?.message}`);
     }
 
-    const { token, dex } = result.data.contracts;
+    const { prelaunch, token, dex, pool } = result.data.contracts;
 
-    // Step 2: Get pool contract
-    console.log("2. Getting pool contract...");
-    const poolResponse = await fetch(
-      "https://faktory-testnet-be.vercel.app/api/aibtcdev/generate-pool",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": process.env.AIBTCDEV_API_KEY || "",
-        },
-        body: JSON.stringify({
-          tokenContract: token.contract,
-          dexContract: dex.contract,
-          senderAddress: address,
-          symbol: "SIMPL20",
-        }),
-      }
-    );
-
-    const poolResult = (await poolResponse.json()) as PoolResponse;
-    if (!poolResult.success) {
-      throw new Error(
-        `Failed to get pool contract: ${poolResult.error?.message}`
-      );
-    }
-
-    const { pool } = poolResult.data;
+    // Step 2: Get pool contract - NO LONGER NEEDED!
+    // console.log("2. Getting pool contract...");
+    // const poolResponse = await fetch(...)
+    // Pool is now included in the main response above!
 
     // Setup network and nonce
     const networkObj = getNetwork("testnet");
     const nonce = await getNextNonce("testnet", address);
 
-    // Step 3.0: Deploy PreLaunch Contract
-    console.log("Prelaunch contract code generated successfully!");
-    console.log("Prelaunch Contract:", prelaunchResult.data.contract.contract);
-
-    // Deploy the prelaunch contract
-    console.log("Deploying prelaunch contract on-chain...");
-    const prelaunchContractName = prelaunchResult.data.contract.name;
-    const prelaunchContractCode = prelaunchResult.data.contract.code;
-
+    // Step 3: Deploy Prelaunch Contract
+    console.log("3. Deploying prelaunch contract...");
     const prelaunchDeployTx = await makeContractDeploy({
-      contractName: prelaunchContractName,
-      codeBody: prelaunchContractCode,
+      contractName: prelaunch.name,
+      codeBody: prelaunch.code,
       senderKey: key,
-      network: getNetwork("testnet"),
+      network: networkObj,
       postConditionMode: PostConditionMode.Allow,
       nonce,
       fee: 30000,
@@ -218,16 +135,14 @@ async function testAIBTCDevDeployment() {
       prelaunchDeployTx
     );
     await logBroadcastResult(prelaunchBroadcastResponse, address);
-    console.log(
-      `Prelaunch contract deployed: ${prelaunchResult.data.contract.contract}`
-    );
+    console.log(`Prelaunch contract deployed: ${prelaunch.contract}`);
 
     // Wait for prelaunch to be mined
     console.log("Waiting 10 seconds for prelaunch to confirm...");
     await delay(10000);
 
-    // Step 3: Deploy Token
-    console.log("3. Deploying token contract...");
+    // Step 4: Deploy Token
+    console.log("4. Deploying token contract...");
     const tokenTx = await makeContractDeploy({
       contractName: token.name,
       codeBody: token.code,
@@ -247,8 +162,8 @@ async function testAIBTCDevDeployment() {
     console.log("Waiting 10 seconds before deploying pool...");
     await delay(10000);
 
-    // Step 4: Deploy Pool
-    console.log("4. Deploying pool contract...");
+    // Step 5: Deploy Pool
+    console.log("5. Deploying pool contract...");
     const poolTx = await makeContractDeploy({
       contractName: pool.name,
       codeBody: pool.code,
@@ -268,8 +183,8 @@ async function testAIBTCDevDeployment() {
     console.log("Waiting 10 seconds before deploying DEX...");
     await delay(10000);
 
-    // Step 5: Deploy DEX
-    console.log("5. Deploying DEX contract...");
+    // Step 6: Deploy DEX
+    console.log("6. Deploying DEX contract...");
     const dexTx = await makeContractDeploy({
       contractName: dex.name,
       codeBody: dex.code,
@@ -287,7 +202,7 @@ async function testAIBTCDevDeployment() {
 
     console.log("\n🎉 All deployments complete!");
     console.log("=================================");
-    console.log("Prelaunch Contract:", prelaunchResult.data.contract.contract);
+    console.log("Prelaunch Contract:", prelaunch.contract);
     console.log("Token Contract:", token.contract);
     console.log("Pool Contract:", pool.contract);
     console.log("DEX Contract:", dex.contract);
