@@ -12,23 +12,57 @@ import {
 } from "./test-utils";
 import dotenv from "dotenv";
 
+// Updated type definition for consolidated response
+interface GenerateResponse {
+  success: boolean;
+  data: {
+    contracts: {
+      prelaunch: {
+        name: string;
+        code: string;
+        hash: string;
+        contract: string;
+      };
+      token: {
+        name: string;
+        code: string;
+        hash: string;
+        contract: string;
+      };
+      dex: {
+        name: string;
+        code: string;
+        hash: string;
+        contract: string;
+      };
+      pool: {
+        name: string;
+        code: string;
+        contract: string;
+      };
+    };
+    dbRecord: any;
+  };
+  error?: { message: string };
+}
+
 dotenv.config();
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function testAIBTCDevDeployment() {
+async function mainnetAIBTCDevDeployment() {
   try {
-    // Get account from mnemonic
+    // Get account from mnemonic - using mainnet
     const { address, key } = await deriveChildAccount(
       "mainnet",
       process.env.MNEMONIC!,
       0
     );
 
-    // Get token and dex contracts
-    console.log("Getting contracts from AI BTC Dev endpoint...");
+    // Step 1: Generate all contracts (prelaunch, token, dex, pool) in one call
+    console.log("1. Getting all contracts from AI BTC Dev endpoint...");
     const response = await fetch(
-      "https://faktory-be.vercel.app/api/aibtcdev/generate",
+      "https://faktory-be.vercel.app/api/aibtcdev/generate", // Mainnet endpoint
       {
         method: "POST",
         headers: {
@@ -36,12 +70,12 @@ async function testAIBTCDevDeployment() {
           "x-api-key": process.env.AIBTCDEV_API_KEY || "",
         },
         body: JSON.stringify({
-          symbol: "testMASK9",
+          symbol: "DEPLYR1",
           name: "ai sbtc",
-          supply: 1000000000, // cannot exceed 1B (1B is allowed)
+          supply: 1000000000,
           creatorAddress: address,
-          originAddress: "SP7SX9AT5H41YGYRV8MACR1NESBYF6TRMC6P82DV", // "SP7SX9AT5H41YGYRV8MACR1NESBYF6TRMC6P82DV", // Added originAddress parameter
-          tweetOrigin: "1883607431143723149", // add tweetOrigin parameter
+          originAddress: "SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR", // Example mainnet address
+          tweetOrigin: "1883607431143723149",
           uri: "https://bncytzyfafclmdxrwpgq.supabase.co/storage/v1/object/public/tokens/60360b67-5f2e-4dfb-adc4-f8bf7c9aab85.json",
           // Optional fields:
           logoUrl:
@@ -56,55 +90,50 @@ async function testAIBTCDevDeployment() {
       }
     );
 
-    const result = await response.json();
+    const result = (await response.json()) as GenerateResponse;
     if (!result.success) {
       throw new Error(`Failed to get contracts: ${result.error?.message}`);
     }
 
-    const { token, dex } = result.data.contracts;
+    const { prelaunch, token, dex, pool } = result.data.contracts;
 
-    // Get pool contract
-    console.log("Getting pool contract...");
-    const poolResponse = await fetch(
-      "https://faktory-be.vercel.app/api/aibtcdev/generate-pool",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-api-key": process.env.AIBTCDEV_API_KEY || "",
-        },
-        body: JSON.stringify({
-          tokenContract: token.contract,
-          dexContract: dex.contract,
-          senderAddress: address,
-          symbol: "testMASK9",
-        }),
-      }
-    );
-
-    const poolResult = await poolResponse.json();
-    if (!poolResult.success) {
-      throw new Error(
-        `Failed to get pool contract: ${poolResult.error?.message}`
-      );
-    }
-
-    const { pool } = poolResult.data;
-
-    // Setup network and nonce
+    // Setup network and nonce - using mainnet
     const networkObj = getNetwork("mainnet");
     const nonce = await getNextNonce("mainnet", address);
 
-    // 1. Deploy Token
-    console.log("1. Deploying token contract...");
+    // Step 2: Deploy Prelaunch Contract
+    console.log("2. Deploying prelaunch contract...");
+    const prelaunchDeployTx = await makeContractDeploy({
+      contractName: prelaunch.name,
+      codeBody: prelaunch.code,
+      senderKey: key,
+      network: networkObj,
+      postConditionMode: PostConditionMode.Allow,
+      nonce,
+      fee: 30000, // Increased fee for mainnet
+      anchorMode: AnchorMode.Any,
+    });
+
+    const prelaunchBroadcastResponse = await broadcastTransaction(
+      prelaunchDeployTx
+    );
+    await logBroadcastResult(prelaunchBroadcastResponse, address);
+    console.log(`Prelaunch contract deployed: ${prelaunch.contract}`);
+
+    // Wait longer for mainnet confirmation
+    console.log("Waiting 30 seconds for prelaunch to confirm...");
+    await delay(10000);
+
+    // Step 3: Deploy Token
+    console.log("3. Deploying token contract...");
     const tokenTx = await makeContractDeploy({
       contractName: token.name,
       codeBody: token.code,
       senderKey: key,
       network: networkObj,
       postConditionMode: PostConditionMode.Allow,
-      nonce,
-      fee: 30000,
+      nonce: nonce + 1,
+      fee: 30000, // Increased fee for mainnet
       anchorMode: AnchorMode.Any,
     });
 
@@ -112,20 +141,20 @@ async function testAIBTCDevDeployment() {
     await logBroadcastResult(tokenBroadcastResponse, address);
     console.log(`Token Contract: ${token.contract}`);
 
-    // Wait 30 seconds
+    // Wait longer for mainnet confirmation
     console.log("Waiting 30 seconds before deploying pool...");
-    await delay(30000);
+    await delay(10000);
 
-    // 2. Deploy Pool
-    console.log("2. Deploying pool contract...");
+    // Step 4: Deploy Pool
+    console.log("4. Deploying pool contract...");
     const poolTx = await makeContractDeploy({
       contractName: pool.name,
       codeBody: pool.code,
       senderKey: key,
       network: networkObj,
       postConditionMode: PostConditionMode.Allow,
-      nonce: nonce + 1,
-      fee: 30000,
+      nonce: nonce + 2,
+      fee: 30000, // Increased fee for mainnet
       anchorMode: AnchorMode.Any,
     });
 
@@ -133,20 +162,20 @@ async function testAIBTCDevDeployment() {
     await logBroadcastResult(poolBroadcastResponse, address);
     console.log(`Pool Contract: ${pool.contract}`);
 
-    // Wait 30 seconds
+    // Wait longer for mainnet confirmation
     console.log("Waiting 30 seconds before deploying DEX...");
-    await delay(30000);
+    await delay(10000);
 
-    // 3. Deploy DEX
-    console.log("3. Deploying DEX contract...");
+    // Step 5: Deploy DEX
+    console.log("5. Deploying DEX contract...");
     const dexTx = await makeContractDeploy({
       contractName: dex.name,
       codeBody: dex.code,
       senderKey: key,
       network: networkObj,
       postConditionMode: PostConditionMode.Allow,
-      nonce: nonce + 2,
-      fee: 30000,
+      nonce: nonce + 3,
+      fee: 30000, // Increased fee for mainnet
       anchorMode: AnchorMode.Any,
     });
 
@@ -154,10 +183,16 @@ async function testAIBTCDevDeployment() {
     await logBroadcastResult(dexBroadcastResponse, address);
     console.log(`DEX Contract: ${dex.contract}`);
 
-    console.log("All deployments complete!");
+    console.log("\n🎉 All mainnet deployments complete!");
+    console.log("=================================");
+    console.log("Prelaunch Contract:", prelaunch.contract);
+    console.log("Token Contract:", token.contract);
+    console.log("Pool Contract:", pool.contract);
+    console.log("DEX Contract:", dex.contract);
+    console.log("=================================");
   } catch (error) {
-    console.error("Error in AI BTC Dev deployment:", error);
+    console.error("Error in mainnet AI BTC Dev deployment:", error);
   }
 }
 
-testAIBTCDevDeployment();
+mainnetAIBTCDevDeployment();
