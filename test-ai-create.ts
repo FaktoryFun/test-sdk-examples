@@ -82,7 +82,7 @@ async function testAIBTCDevDeployment() {
           "x-api-key": process.env.AIBTCDEV_API_KEY || "",
         },
         body: JSON.stringify({
-          symbol: "DEPLYR1",
+          symbol: "VISVASA1",
           name: "ai sbtc",
           supply: 1000000000,
           creatorAddress: address,

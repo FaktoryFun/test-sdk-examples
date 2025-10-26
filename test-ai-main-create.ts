@@ -70,11 +70,11 @@ async function mainnetAIBTCDevDeployment() {
           "x-api-key": process.env.AIBTCDEV_API_KEY || "",
         },
         body: JSON.stringify({
-          symbol: "DEPLYR1",
+          symbol: "GRANUI1",
           name: "ai sbtc",
           supply: 1000000000,
           creatorAddress: address,
-          originAddress: "SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR", // Example mainnet address
+          originAddress: "SP3N41Z9P8E9BM715R6V6189R3RK6FVVXWAGNP8P6", // Example mainnet address
           tweetOrigin: "1883607431143723149",
           uri: "https://bncytzyfafclmdxrwpgq.supabase.co/storage/v1/object/public/tokens/60360b67-5f2e-4dfb-adc4-f8bf7c9aab85.json",
           // Optional fields:

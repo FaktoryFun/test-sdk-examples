@@ -26,7 +26,8 @@
     "testnet-prelaunch": "ts-node test-testnet-prelaunch.ts",
     "deploy-dao": "ts-node deploy-dao.ts",
     "mainnet-prelaunch": "ts-node test-mainnet-prelaunch.ts",
-    "main-ai-create": "ts-node test-ai-main-create.ts"
+    "main-ai-create": "ts-node test-ai-main-create.ts",
+    "main-buy-pool": "ts-node test-pool-sbtc-buy.ts"
   },
   "keywords": [],
   "author": "",
