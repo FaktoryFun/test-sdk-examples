@@ -34,7 +34,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@faktoryfun/core-sdk": "^0.2.18",
+    "@faktoryfun/core-sdk": "^0.3.7",
     "@stacks/common": "^7.0.2",
     "@stacks/network": "^6.17.0",
     "@stacks/stacks-blockchain-api-types": "^7.14.1",
