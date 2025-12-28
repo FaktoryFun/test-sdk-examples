@@ -28,7 +28,8 @@
     "mainnet-prelaunch": "ts-node test-mainnet-prelaunch.ts",
     "main-ai-create": "ts-node test-ai-main-create.ts",
     "main-buy-pool": "ts-node test-pool-sbtc-buy.ts",
-    "main-sell-pool": "ts-node test-pool-sbtc-sell.ts"
+    "main-sell-pool": "ts-node test-pool-sbtc-sell.ts",
+    "test-x402-deploy": "ts-node test-x402-deploy.ts"
   },
   "keywords": [],
   "author": "",
@@ -42,7 +43,8 @@
     "@stacks/wallet-sdk": "^7.0.2",
     "dotenv": "^16.4.7",
     "node-fetch": "^3.3.2",
-    "ordinalsbot": "^0.2.15"
+    "ordinalsbot": "^0.2.15",
+    "x402-stacks": "^1.1.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
