@@ -6,10 +6,11 @@ import {
 } from "x402-stacks";
 import axios, { AxiosInstance } from "axios";
 import dotenv from "dotenv";
+import { deriveChildAccount } from "./test-utils";
 
 dotenv.config();
 
-const API_BASE_URL = "https://styxbtc.com/"; // or your local dev URL
+const API_BASE_URL = "https://styxbtc.com"; // or your local dev URL
 
 interface DeployResponse {
   success: boolean;
@@ -62,15 +63,16 @@ interface DeployResponse {
 
 async function testX402Deploy() {
   try {
-    // Step 1: Create account from private key
+    // Step 1: Create account from mnemonic
     console.log("1. Setting up account...");
-    const privateKey = process.env.PRIVATE_KEY;
-    if (!privateKey) {
-      throw new Error("PRIVATE_KEY not set in .env");
+    const mnemonic = process.env.MNEMONIC;
+    if (!mnemonic) {
+      throw new Error("MNEMONIC not set in .env");
     }
 
-    const account = privateKeyToAccount(privateKey, "mainnet");
-    console.log(`   Account address: ${account.address}`);
+    const { address, key } = await deriveChildAccount("mainnet", mnemonic, 0);
+    const account = privateKeyToAccount(key, "mainnet");
+    console.log(`   Account address: ${address}`);
 
     // Step 2: Create axios instance with x402 payment interceptor
     // Cast to any to avoid axios version mismatch issues
@@ -170,13 +172,16 @@ async function testX402Deploy() {
 async function testX402DeployManual() {
   console.log("=== Manual x402 Flow (for learning) ===\n");
 
-  const privateKey = process.env.PRIVATE_KEY;
-  if (!privateKey) {
-    throw new Error("PRIVATE_KEY not set in .env");
+  const mnemonic = process.env.MNEMONIC;
+  if (!mnemonic) {
+    throw new Error("MNEMONIC not set in .env");
   }
 
+  const { address } = await deriveChildAccount("mainnet", mnemonic, 0);
+  console.log(`Account address: ${address}`);
+
   // Step 1: Make request without payment
-  console.log("1. Making initial request (will get 402)...");
+  console.log("\n1. Making initial request (will get 402)...");
   try {
     await axios.post(`${API_BASE_URL}/api/aibtc-memes/deploy-x402`, {
       symbol: "TEST",
