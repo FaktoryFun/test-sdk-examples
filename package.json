@@ -31,7 +31,8 @@
     "main-sell-pool": "ts-node test-pool-sbtc-sell.ts",
     "test-x402-deploy": "ts-node test-x402-deploy.ts",
     "test-x402-deploy-dao": "ts-node test-x402-deploy-faktory-dao.ts",
-    "register-x402-endpoint": "ts-node register-faktory-dao-x402.ts"
+    "register-x402-endpoint": "ts-node register-faktory-dao-x402.ts",
+    "register-dao": "ts-node test-register-faktory-dao.ts"
   },
   "keywords": [],
   "author": "",
