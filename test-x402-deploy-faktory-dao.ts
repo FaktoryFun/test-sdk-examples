@@ -11,7 +11,8 @@ import { deriveChildAccount } from "./test-utils";
 
 dotenv.config();
 
-const API_BASE_URL = "https://faktory-dao.vercel.app"; // or your local dev URL
+// Set this in .env or change here
+const API_BASE_URL = process.env.FAKTORY_DAO_API_URL || "http://localhost:3000";
 
 interface DeployResponse {
   success: boolean;
