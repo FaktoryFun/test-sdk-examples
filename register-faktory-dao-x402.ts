@@ -1,6 +1,7 @@
 // register-faktory-dao-x402.ts
 // Register the faktory-dao deploy endpoint with stx402.com registry
-import { withPaymentInterceptor, privateKeyToAccount } from "x402-stacks";
+// Uses x402-stacks v2 for Coinbase-compatible x402 protocol
+import { wrapAxiosWithPayment, privateKeyToAccount } from "x402-stacks";
 import axios from "axios";
 import dotenv from "dotenv";
 import { deriveChildAccount } from "./test-utils";
@@ -16,14 +17,14 @@ async function registerEndpoint() {
   }
 
   const { address, key } = await deriveChildAccount("mainnet", mnemonic, 0);
-  const account = privateKeyToAccount(key, "mainnet");
+  const account = privateKeyToAccount(key, "stacks:1"); // v2 uses CAIP-2 network format
   console.log(`Payer address: ${address}`);
 
-  const api = withPaymentInterceptor(
+  const api = wrapAxiosWithPayment(
     axios.create({
       baseURL: "https://stx402.com",
       headers: { "Content-Type": "application/json" },
-    }) as any,
+    }),
     account
   );
 

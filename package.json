@@ -46,7 +46,7 @@
     "dotenv": "^16.4.7",
     "node-fetch": "^3.3.2",
     "ordinalsbot": "^0.2.15",
-    "x402-stacks": "^1.1.0"
+    "x402-stacks": "^2.0.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
